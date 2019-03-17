@@ -5,6 +5,7 @@ import model.Intent;
 import model.Message;
 import model.Response;
 import model.Status;
+import util.Util;
 
 import java.io.*;
 import java.net.Socket;
@@ -58,6 +59,46 @@ public class Client implements Runnable{
 
                     // Uradite nesto sa klijentom koji je seo ...
                     System.out.println("Klijent je seo za sto");
+
+                    // If the server tells us to draw
+                    if(gson.fromJson(in.readLine(), Message.class).getIntent().equals(Intent.DRAW)){
+
+                        System.out.println("Drawing a straw..");
+                        // Send the draw to the server
+                        response.setStatus(Status.OK);
+                        response.setData(Util.getRandomNumber(0,5));
+                        out.write(gson.toJson(response));
+                        out.newLine();
+                        out.flush();
+
+
+                    }
+                    // If the server tells us to bid
+                    else{
+                        System.out.println("Bidding..");
+                        // Send the bid to the server
+                        response.setStatus(Status.OK);
+                        response.setData(Util.getRandomBoolean());
+                        out.write(gson.toJson(response));
+                        out.newLine();
+                        out.flush();
+
+                    }
+
+
+
+//                    message.setIntent(Intent.BID);
+//                    out.write(gson.toJson(message));
+//                    out.newLine();
+//                    out.flush();
+
+
+
+
+
+
+
+
                 } else
                 {
                     System.out.println("Klijent nije uspeo da sedne za sto");
@@ -79,4 +120,20 @@ public class Client implements Runnable{
             e.printStackTrace();
         }
     }
+
+//    private void sendBid(){
+//
+//        message.setIntent(Intent.BID);
+//        out.write(gson.toJson(message));
+//        out.newLine();
+//        out.flush();
+//
+//    }
+//
+//    private void sendDraw(){
+//
+//
+//
+//    }
+//
 }
