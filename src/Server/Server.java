@@ -13,9 +13,10 @@ public class Server implements Runnable{
     private ServerSocket serverSocket;
     private Resources resources;
 
-    public Server() throws IOException {
+    public Server(int number_of_rounds) throws IOException {
         this.serverSocket = new ServerSocket(9393);
         resources = new Resources();
+        resources.setNumber_of_rounds(number_of_rounds);
     }
 
 

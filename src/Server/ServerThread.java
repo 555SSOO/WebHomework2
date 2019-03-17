@@ -57,10 +57,9 @@ public class ServerThread implements Runnable {
                 boolean seated = resources.giveSeat(user);
                 System.out.println("Stigao zahtev za stolicu od korisnika " + request.getId());
 
-                if(seated){
+                if (seated) {
                     response.setStatus(Status.OK);
-                }
-                else{
+                } else {
                     // If we don't have a seat for this client, just end the connection
                     out.write(gson.toJson(response));
                     out.newLine();
@@ -75,12 +74,15 @@ public class ServerThread implements Runnable {
             out.flush();
 
             // Wait until there are enough players
-            while(resources.getNumberOfUsers() < 6){
+            while (!resources.isTableFilled()) {
             }
+
+            System.out.println("Everyone sat down, starting the game..");
 
             // If the user is a picker, send him a draw request
             Message message = new Message();
-            if(resources.pickUser().equals(user)){
+            boolean isPicker = resources.pickUser().equals(user);
+            if (isPicker) {
                 message.setIntent(Intent.DRAW);
                 out.write(gson.toJson(message));
                 out.newLine();
@@ -88,12 +90,23 @@ public class ServerThread implements Runnable {
 
                 // Get the users draw
                 response = gson.fromJson(in.readLine(), Response.class);
-                Double temp_double = (Double)response.getData();
-                user.setDraw(temp_double.intValue());
+                Double temp_double = (Double) response.getData();
+                int pick = temp_double.intValue();
+                user.setDraw(pick);
+
+                // If his pick was wrong, end the connection
+                if (!resources.checkPick(pick)) {
+                    message.setIntent(Intent.END);
+                    out.write(gson.toJson(message));
+                    out.newLine();
+                    out.flush();
+                    socket.close();
+                    return;
+                }
 
             }
             // If he is not the picker, ask him to bid
-            else{
+            else {
                 message.setIntent(Intent.BID);
                 out.write(gson.toJson(message));
                 out.newLine();
@@ -106,10 +119,18 @@ public class ServerThread implements Runnable {
 
 
             // Wait until every player chooses
-            while(resources.getNumberOfChoices() < 6){
+            while (resources.getNumberOfChoices() < 6) {
             }
 
             System.out.println("Everyone made a choice");
+
+
+            // Give the players their points
+
+            // We can use the isPicker flag because we have only one of those, and we want to add the points once
+            if (isPicker) {
+                resources.givePoints(user);
+            }
 
 
 

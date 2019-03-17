@@ -3,7 +3,7 @@ package server;
 public class User {
     private String id;
     private boolean isPicker = false;
-    private int points;
+    private int points = 0;
     private Boolean bid = null;
     private Integer draw;
 

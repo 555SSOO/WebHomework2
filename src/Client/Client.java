@@ -71,6 +71,13 @@ public class Client implements Runnable{
                         out.newLine();
                         out.flush();
 
+                        // If we get the end command, our pick was the short straw and we shutdown this thread
+                        message = gson.fromJson(in.readLine(), Message.class);
+                        if(message.getIntent().equals(Intent.END)){
+                            System.out.println("We got the short straw, leaving the room..");
+                            socket.close();
+                            return;
+                        }
 
                     }
                     // If the server tells us to bid
@@ -84,20 +91,6 @@ public class Client implements Runnable{
                         out.flush();
 
                     }
-
-
-
-//                    message.setIntent(Intent.BID);
-//                    out.write(gson.toJson(message));
-//                    out.newLine();
-//                    out.flush();
-
-
-
-
-
-
-
 
                 } else
                 {

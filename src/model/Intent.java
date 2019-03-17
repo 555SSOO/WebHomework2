@@ -6,6 +6,6 @@ package model;
 public enum Intent {
     REQUEST_CHAIR,  // Trazi praznu stolicu za stolom
     BID,            // Daj ulog
-    DRAW            // Povuci stapic
-
+    DRAW,           // Povuci stapic
+    END             // End the connection
 }
